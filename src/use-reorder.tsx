@@ -22,7 +22,7 @@ export function useReorder(items: Item[], config?: Config): Hook {
   const [order, setOrder] = useState(startOrder);
   const dirty = !R.equals(order, startOrder)
 
-  useEffect(() => { if(config?.reset) setOrder(startOrder) }, [items])
+  useEffect(() => { if(config?.reset) setOrder(startOrder) }, [items.map(it => it.id)])
 
   const onDragEnd = (result: DropResult) => {
     if (result.destination?.index === undefined) {
