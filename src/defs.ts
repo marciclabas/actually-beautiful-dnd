@@ -6,9 +6,12 @@ export type Item = {
     id: string
 }
 
+/**
+ * - `reset`: whether to reset the order whenever inputs change
+ */
 export type Config = {
     disabled?: boolean
-    direction?: Direction
+    reset?: boolean
 }
 
 /**

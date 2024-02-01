@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import {
   DragDropContext,
   Draggable,
@@ -21,6 +21,8 @@ export function useReorder(items: Item[], config?: Config): Hook {
   const startOrder = useMemo(() => R.range(0, items.length), [items.length])
   const [order, setOrder] = useState(startOrder);
   const dirty = !R.equals(order, startOrder)
+
+  useEffect(() => { if(config?.reset) setOrder(startOrder) }, [items])
 
   const onDragEnd = (result: DropResult) => {
     if (result.destination?.index === undefined) {
