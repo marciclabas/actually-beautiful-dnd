@@ -6,12 +6,8 @@ export type Item = {
     id: string
 }
 
-/**
- * - `reset`: whether to reset the order whenever inputs change
- */
 export type Config = {
     disabled?: boolean
-    reset?: boolean
 }
 
 /**
@@ -25,4 +21,5 @@ export type Hook = {
     order: number[]
     ordered: Item[]
     dirty: boolean
+    reset(): void
 }
