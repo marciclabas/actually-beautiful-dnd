@@ -14,4 +14,5 @@ export type Config = {
 export type Hook = {
     reorderer: ReactNode
     order: number[]
+    ordered: Item[]
 }

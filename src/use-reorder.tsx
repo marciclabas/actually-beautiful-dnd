@@ -55,5 +55,5 @@ export function useReorder(items: Item[], config?: Config): Hook {
     </DragDropContext>
   );
 
-  return { reorderer, order };
+  return { reorderer, order, ordered };
 }
