@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useMemo, useState } from "react";
 import {
   DragDropContext,
   Draggable,
@@ -17,7 +17,10 @@ const Card = styled.div`
 
 /** #### DOESN'T WORK WITH <React.StrictMode> */
 export function useReorder(items: Item[], config?: Config): Hook {
-  const [order, setOrder] = useState(R.range(0, items.length));
+
+  const startOrder = useMemo(() => R.range(0, items.length), [items.length])
+  const [order, setOrder] = useState(startOrder);
+  const dirty = !R.equals(order, startOrder)
 
   const onDragEnd = (result: DropResult) => {
     if (result.destination?.index === undefined) {
@@ -55,5 +58,5 @@ export function useReorder(items: Item[], config?: Config): Hook {
     </DragDropContext>
   );
 
-  return { reorderer, order, ordered };
+  return { reorderer, order, ordered, dirty };
 }
