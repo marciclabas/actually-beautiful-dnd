@@ -2,7 +2,7 @@ import { ReactNode } from "react"
 import { Direction } from "react-beautiful-dnd"
 
 export type Item = {
-    elem: ReactNode
+    elem(idx: number): ReactNode
     id: string
 }
 

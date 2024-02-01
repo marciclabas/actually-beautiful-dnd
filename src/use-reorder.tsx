@@ -47,7 +47,7 @@ export function useReorder(items: Item[], config?: Config): Hook {
                     {...provided.draggableProps}
                     {...provided.dragHandleProps}
                   >
-                    {item.elem}
+                    {item.elem(index)}
                   </Card>
                 )}
               </Draggable>
