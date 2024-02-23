@@ -7,8 +7,6 @@ import {
 } from "react-beautiful-dnd";
 import { Config, Hook, Item } from ".";
 import { range, equals } from './util'
-import './reorder.css'
-
 
 /** #### DOESN'T WORK WITH <React.StrictMode> */
 export function useReorder(items: Item[], config?: Config): Hook {
@@ -39,27 +37,35 @@ export function useReorder(items: Item[], config?: Config): Hook {
   const ordered = order.map((i) => items[i]);
 
   const reorderer = (
-    <DragDropContext onDragEnd={onDragEnd}>
-      <Droppable droppableId="droppable" direction="vertical">
-        {(provided) => (
-          <div {...provided.droppableProps} ref={provided.innerRef}>
-            {ordered.map((item, index) => (
-              <Draggable key={item.id} draggableId={item.id} index={index} isDragDisabled={config?.disabled}>
-                {(provided) => (
-                  <div className="use-reorder-card"
-                    ref={provided.innerRef}
-                    {...provided.draggableProps}
-                    {...provided.dragHandleProps}
-                  >
-                    {item.elem(index)}
-                  </div>
-                )}
-              </Draggable>
-            ))}
-          </div>
-        )}
-      </Droppable>
-    </DragDropContext>
+    <>
+      <style>
+      {`.use-reorder-card > * {
+          display: inline-block;
+        }`
+      }
+      </style>
+      <DragDropContext onDragEnd={onDragEnd}>
+        <Droppable droppableId="droppable" direction="vertical">
+          {(provided) => (
+            <div {...provided.droppableProps} ref={provided.innerRef}>
+              {ordered.map((item, index) => (
+                <Draggable key={item.id} draggableId={item.id} index={index} isDragDisabled={config?.disabled}>
+                  {(provided) => (
+                    <div className="use-reorder-card"
+                      ref={provided.innerRef}
+                      {...provided.draggableProps}
+                      {...provided.dragHandleProps}
+                    >
+                      {item.elem(index)}
+                    </div>
+                  )}
+                </Draggable>
+              ))}
+            </div>
+          )}
+        </Droppable>
+      </DragDropContext>
+    </>
   );
 
   return { reorderer, order, ordered, dirty, reset };
