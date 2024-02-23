@@ -1,5 +1,4 @@
 import { ReactNode } from "react"
-import { Direction } from "react-beautiful-dnd"
 
 export type Item = {
     elem(idx: number): ReactNode

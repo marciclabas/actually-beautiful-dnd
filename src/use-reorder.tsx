@@ -5,22 +5,22 @@ import {
   Droppable,
   DropResult,
 } from "react-beautiful-dnd";
-import * as R from "ramda";
 import { Config, Hook, Item } from ".";
-import styled from "styled-components";
+import { range, equals } from './util'
+import './reorder.css'
 
-const Card = styled.div`
-  & > * {
-    display: inline-block;
-  }
-`
 
 /** #### DOESN'T WORK WITH <React.StrictMode> */
 export function useReorder(items: Item[], config?: Config): Hook {
 
-  const startOrder = useMemo(() => R.range(0, items.length), [items.length])
+  const startOrder = useMemo(() => [...range(items.length)], [items.length])
   const [order, setOrder] = useState(startOrder);
-  const dirty = !R.equals(order, startOrder)
+  const dirty = equals(order, startOrder)
+
+  useEffect(() => {
+    console.debug('Items', items)
+    console.debug('Order', order)
+  }, [items, order])
 
   function reset() {
     setOrder(startOrder)
@@ -46,13 +46,13 @@ export function useReorder(items: Item[], config?: Config): Hook {
             {ordered.map((item, index) => (
               <Draggable key={item.id} draggableId={item.id} index={index} isDragDisabled={config?.disabled}>
                 {(provided) => (
-                  <Card
+                  <div className="use-reorder-card"
                     ref={provided.innerRef}
                     {...provided.draggableProps}
                     {...provided.dragHandleProps}
                   >
                     {item.elem(index)}
-                  </Card>
+                  </div>
                 )}
               </Draggable>
             ))}
