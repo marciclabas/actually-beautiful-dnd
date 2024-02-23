@@ -1,6 +1,6 @@
 export function* range(n: number) {
   for (let i = 0; i < n; i++)
-    yield n
+    yield i
 }
 
 /** Single-level equality (`x === y` for each element) */
