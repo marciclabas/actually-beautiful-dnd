@@ -1,6 +1,6 @@
 {
     "name": "use-reorder",
-    "version": "1.0.14",
+    "version": "1.0.15",
     "description": "Hooks API wrapper around `react-beautiful-dnd`",
     "main": "dist/index.js",
     "scripts": {
@@ -10,6 +10,11 @@
     },
     "author": "Marcel Claramunt",
     "license": "ISC",
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/moveread/actually-beautiful-dnd",
+        "directory": "use-reorder"
+    },
     "devDependencies": {
         "@types/react": "^18.2.51",
         "@types/react-beautiful-dnd": "^13.1.8",
