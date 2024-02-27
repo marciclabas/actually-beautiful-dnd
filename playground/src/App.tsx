@@ -1,11 +1,9 @@
-import Reorder from "./pages/reorder/App"
-import FromTo from "./pages/from-to/App"
+import Single from "./pages/single/App"
 import { RouteObject, useNavigate, useRoutes } from "react-router-dom"
 import { Button } from "@chakra-ui/react"
 
 const pages: Record<string, JSX.Element> = {
-  reorder: <Reorder />,
-  'from-to': <FromTo />,
+  singl: <Single />,
 }
 
 function Menu() {

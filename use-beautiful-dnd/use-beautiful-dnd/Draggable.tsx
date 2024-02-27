@@ -1,18 +1,23 @@
-import React, { HTMLProps, createContext, useContext } from "react"
+import React, { HTMLProps, ReactNode, createContext, useContext } from "react"
 import { DraggableProps, Draggable as DnDDraggable, DraggableStateSnapshot, DraggableRubric } from "react-beautiful-dnd"
 
-const DraggableCtx = createContext<{
+export type DraggableContext = {
   snapshot: DraggableStateSnapshot
   rubric: DraggableRubric
-}>({} as any)
+}
+
+const DraggableCtx = createContext<DraggableContext>({} as any)
 
 export const useDraggableContext = () => useContext(DraggableCtx)
 
 type DragProps = Omit<DraggableProps, 'children'>
-export type Props = DragProps & HTMLProps<HTMLDivElement>
+export type Props = DragProps & {
+  divProps?: HTMLProps<HTMLDivElement>
+  children?: ReactNode
+}
 /** Exactly the same as `react-beautiful-dnd`'s `Draggable`, without the ugly render props.
  * - `children`: actual, normal children
- * - Supports any props you'd pass to a normal `<div>`, e.g `style` or `className`
+ * - `divProps`: passed to the draggable `<div>` element, e.g `style` or `className`
  * - Want to use `snapshot` or `rubric`? Use `useDraggableContext`
  * 
  * ```jsx
@@ -28,11 +33,9 @@ export type Props = DragProps & HTMLProps<HTMLDivElement>
  * <Draggable />
  * ```
  */
-export function Draggable({children, ...props}: Props) {
-  const { draggableId, index, disableInteractiveElementBlocking, isDragDisabled, shouldRespectForcePress, ...divProps } = props
-  const dragProps: DragProps = { draggableId, index, disableInteractiveElementBlocking, isDragDisabled, shouldRespectForcePress }
+export function Draggable({children, divProps, ...props}: Props) {
   return (
-    <DnDDraggable {...dragProps}>
+    <DnDDraggable {...props}>
       {({ dragHandleProps, draggableProps, innerRef }, snapshot, rubric) => (
         <div ref={innerRef} {...dragHandleProps} {...draggableProps} {...divProps}>
           <DraggableCtx.Provider value={{snapshot, rubric}}>

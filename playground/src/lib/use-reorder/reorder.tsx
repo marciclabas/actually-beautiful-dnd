@@ -1,11 +1,11 @@
 import React, { ReactNode,  useMemo, useState } from "react";
 import { Direction, DragDropContext, DropResult, SensorAPI } from "react-beautiful-dnd";
-import { useAnimationSensor, Draggable, Droppable, useDraggableContext } from "use-beautiful-dnd";
+import { useAnimationSensor, Draggable, Droppable, useDraggableContext, useTouchSensor } from "../use-beautiful-dnd";
 import { range, equals } from './util'
+import { DraggableContext } from "../use-beautiful-dnd/Draggable";
 
-export type ItemProps = {
+export type ItemProps = DraggableContext & {
   idx: number
-  dragging: boolean
 }
 export type Item = {
   elem(props: ItemProps): ReactNode
@@ -32,9 +32,9 @@ export type Hook = {
   animate: SensorAPI | null
 }
 
-function wrapper(idx: number, elem: Item['elem']) {
-  const { snapshot } = useDraggableContext()
-  snapshot.
+function withContext(idx: number, Elem: Item['elem']) {
+  const ctx = useDraggableContext()
+  return <Elem idx={idx} {...ctx} />
 }
 
 /** #### DOESN'T WORK WITH <React.StrictMode> */
@@ -58,12 +58,16 @@ export function useReorder(items: Item[], config?: Config): Hook {
   const ordered = order.map((i) => items[i]);
   const { sensor, api } = useAnimationSensor()
 
+  const touch = useTouchSensor({
+    timeForLongPress: 0, forcePressThreshold: 0
+  })
+
   const reorderer = (
-    <DragDropContext onDragEnd={onDragEnd} sensors={[sensor]}>
+    <DragDropContext onDragEnd={onDragEnd} sensors={[sensor, touch]}>
       <Droppable droppableId='whatever'>
         {ordered.map((item, i) => (
           <Draggable key={item.id} draggableId={item.id} index={i} isDragDisabled={config?.disabled}>
-            {item.elem(i)}
+            {withContext(i, item.elem)}
           </Draggable>
         ))}
       </Droppable>

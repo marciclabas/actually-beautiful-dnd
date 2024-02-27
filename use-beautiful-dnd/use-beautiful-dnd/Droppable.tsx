@@ -1,14 +1,17 @@
-import React, { HTMLProps, createContext, useContext } from "react"
+import React, { HTMLProps, ReactNode, createContext, useContext } from "react"
 import { DroppableProps, Droppable as DnDDroppable, DroppableStateSnapshot } from "react-beautiful-dnd"
 
 const DroppableCtx = createContext<DroppableStateSnapshot>({} as any)
 export const useDroppableSnapshot = () => useContext(DroppableCtx)
 
 type DropProps = Omit<DroppableProps, 'children'>
-export type Props = DropProps & HTMLProps<HTMLDivElement>
+export type Props = DropProps & {
+  children?: ReactNode
+  divProps?: HTMLProps<HTMLDivElement>
+}
 /** Exactly the same as `react-beautiful-dnd`'s `Droppable`, without the ugly render props.
  * - `children`: actual, normal children
- * - Supports any props you'd pass to a normal `<div>`, e.g `style` or `className`
+ * - `divProps`: passed to the droppable `<div>` element,, e.g `style` or `className`
  * - Want to use `snapshot`? Use `useDroppableSnapshot`
  * 
  * ```jsx
@@ -23,14 +26,9 @@ export type Props = DropProps & HTMLProps<HTMLDivElement>
  *   <Child />
  * <Droppable>
  */
-export function Droppable({children, ...props}: Props) {
-  const {
-    droppableId, direction, getContainerForClone, ignoreContainerClipping,
-    isCombineEnabled, isDropDisabled, mode, renderClone, type, ...divProps
-  } = props
-  const dropProps: DropProps = { droppableId, direction, getContainerForClone, ignoreContainerClipping, isCombineEnabled, isDropDisabled, mode, renderClone, type }
+export function Droppable({children, divProps, ...props}: Props) {
   return (
-    <DnDDroppable {...dropProps}>
+    <DnDDroppable {...props}>
       {({ droppableProps, innerRef, placeholder }, snapshot) => (
         <div {...droppableProps} ref={innerRef} {...divProps}>
           <DroppableCtx.Provider value={snapshot}>
