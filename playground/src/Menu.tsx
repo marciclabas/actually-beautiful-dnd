@@ -1,9 +1,11 @@
 import Single from "./pages/single/App"
 import { RouteObject, useNavigate, useRoutes } from "react-router-dom"
 import { Button } from "@chakra-ui/react"
+import Multi from "./pages/multi/Multi"
 
 const pages: Record<string, JSX.Element> = {
   single: <Single />,
+  multi: <Multi />
 }
 
 function Menu() {

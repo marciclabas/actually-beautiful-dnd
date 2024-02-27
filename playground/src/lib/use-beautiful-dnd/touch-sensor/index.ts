@@ -1,1 +1,0 @@
-export { useTouchSensor, type Config } from './touch-sensor'
