@@ -1,7 +1,7 @@
 import React, { ReactNode,  useMemo, useState } from "react";
 import { Direction, DragDropContext, DropResult, SensorAPI } from "react-beautiful-dnd";
 import { useAnimationSensor, Draggable, Droppable, useDraggableContext } from "use-beautiful-dnd";
-import { range, equals } from './util'
+import { range, equals } from './util/arrays'
 
 export type ItemProps = {
   idx: number

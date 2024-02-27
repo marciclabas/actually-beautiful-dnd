@@ -1,9 +1,11 @@
 import Single from "./pages/single/App"
 import { RouteObject, useNavigate, useRoutes } from "react-router-dom"
 import { Button } from "@chakra-ui/react"
+import AnimationDnd from "./pages/animation-dnd/AnimationDnd"
 
 const pages: Record<string, JSX.Element> = {
   singl: <Single />,
+  anim: <AnimationDnd />
 }
 
 function Menu() {

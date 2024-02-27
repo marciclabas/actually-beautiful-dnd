@@ -1,6 +1,6 @@
 import React, { ReactNode,  useMemo, useState } from "react";
 import { Direction, DragDropContext, DropResult, SensorAPI } from "react-beautiful-dnd";
-import { useAnimationSensor, Draggable, Droppable, useDraggableContext, useTouchSensor } from "../use-beautiful-dnd";
+import { useAnimationSensor, Draggable, Droppable, useDraggableContext, useTouchSensor, TouchConfig } from "../use-beautiful-dnd";
 import { range, equals } from './util'
 import { DraggableContext } from "../use-beautiful-dnd/Draggable";
 
@@ -12,7 +12,7 @@ export type Item = {
   id: string
 }
 
-export type Config = {
+export type Config = TouchConfig & {
   disabled?: boolean
   direction?: Direction
 }
@@ -58,12 +58,10 @@ export function useReorder(items: Item[], config?: Config): Hook {
   const ordered = order.map((i) => items[i]);
   const { sensor, api } = useAnimationSensor()
 
-  const touch = useTouchSensor({
-    timeForLongPress: 0, forcePressThreshold: 0
-  })
+  const touch = useTouchSensor(config)
 
   const reorderer = (
-    <DragDropContext onDragEnd={onDragEnd} sensors={[sensor, touch]}>
+    <DragDropContext onDragEnd={onDragEnd} sensors={[sensor, touch]} enableDefaultSensors={false}>
       <Droppable droppableId='whatever'>
         {ordered.map((item, i) => (
           <Draggable key={item.id} draggableId={item.id} index={i} isDragDisabled={config?.disabled}>
