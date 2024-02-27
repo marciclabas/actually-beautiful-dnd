@@ -1,2 +1,6 @@
 patch:
   yarn run build && yarn version --patch && npm publish
+
+# Install a package as both --dev and --peer
+extra PACKAGE:
+  yarn add --peer {{PACKAGE}} && yarn add --dev {{PACKAGE}}

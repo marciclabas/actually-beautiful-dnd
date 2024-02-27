@@ -1,18 +1,18 @@
 import React, { ReactNode,  useMemo, useState } from "react";
-import { Direction, DragDropContext, DropResult, SensorAPI } from "react-beautiful-dnd";
-import { useAnimationSensor, Draggable, Droppable, useDraggableContext } from "use-beautiful-dnd";
+import { Direction, DragDropContext, DropResult, SensorAPI, useKeyboardSensor, useMouseSensor } from "react-beautiful-dnd";
+import { useAnimationSensor, Draggable, Droppable, useDraggableContext, useTouchSensor, TouchConfig, DraggableContext } from "use-beautiful-dnd";
 import { range, equals } from './util/arrays'
+import { reorder } from "./util/reorder";
 
-export type ItemProps = {
+export type ItemProps = DraggableContext & {
   idx: number
-  dragging: boolean
 }
 export type Item = {
   elem(props: ItemProps): ReactNode
   id: string
 }
 
-export type Config = {
+export type Config = TouchConfig & {
   disabled?: boolean
   direction?: Direction
 }
@@ -32,9 +32,9 @@ export type Hook = {
   animate: SensorAPI | null
 }
 
-function wrapper(idx: number, elem: Item['elem']) {
-  const { snapshot } = useDraggableContext()
-  snapshot.
+function withContext(idx: number, Elem: Item['elem']) {
+  const ctx = useDraggableContext()
+  return <Elem idx={idx} {...ctx} />
 }
 
 /** #### DOESN'T WORK WITH <React.StrictMode> */
@@ -45,25 +45,23 @@ export function useReorder(items: Item[], config?: Config): Hook {
   const dirty = equals(order, startOrder)
 
   const onDragEnd = (result: DropResult) => {
-    console.log('Drag result', result)
     if (result.destination?.index === undefined)
       return
-    const newItems = Array.from(order);
-    const [removed] = newItems.splice(result.source.index, 1);
-    newItems.splice(result.destination.index, 0, removed);
-    console.log('new order:', newItems)
-    setOrder(newItems);
+    const newOrder = reorder(order, result.source.index, result.destination.index)
+    setOrder(newOrder)
   };
 
   const ordered = order.map((i) => items[i]);
   const { sensor, api } = useAnimationSensor()
 
+  const touch = useTouchSensor(config)
+
   const reorderer = (
-    <DragDropContext onDragEnd={onDragEnd} sensors={[sensor]}>
+    <DragDropContext onDragEnd={onDragEnd} sensors={[sensor, touch, useKeyboardSensor, useMouseSensor]} enableDefaultSensors={false}>
       <Droppable droppableId='whatever'>
         {ordered.map((item, i) => (
           <Draggable key={item.id} draggableId={item.id} index={i} isDragDisabled={config?.disabled}>
-            {item.elem(i)}
+            {withContext(i, item.elem)}
           </Draggable>
         ))}
       </Droppable>
