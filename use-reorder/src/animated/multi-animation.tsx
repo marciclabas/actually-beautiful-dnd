@@ -55,14 +55,8 @@ export type Config = {
 */
 export function useMultiAnimation(itemId: string, config?: Config): Hook {
   const { animate: animateIcon, animation } = useTouchAnimation(config?.icon)
-  const { sensor, api } = useAnimationSensor()
+  const { sensor, apiRef } = useAnimationSensor()
   
-  const apiPromise = useRef(managedPromise<SensorAPI>())
-  useEffect(() => {
-    if (api)
-      apiPromise.current.resolve(api)
-  }, [api])
-
   const running = useRef({ promise: Promise.resolve(), resolve: () => {} })
   const [present, remove] = usePresence()
   useEffect(() => {
@@ -71,7 +65,7 @@ export function useMultiAnimation(itemId: string, config?: Config): Hook {
   }, [present])
 
   async function run() {
-    const api = await apiPromise.current.promise
+    const api = await apiRef.current.promise
     running.current = managedPromise()
     await animate({ api, itemId, animateIcon })
     running.current.resolve()

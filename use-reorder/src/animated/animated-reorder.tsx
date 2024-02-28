@@ -67,16 +67,10 @@ export function useAnimatedReorder(items: Item[], config?: AnimatedConfig): Anim
   ? [makeAnimated(items[0]), ...items.slice(1)]
   : items
 
-  const { reorderer, animate, ...hook } = useReorder(animatedItems, config)
-  const apiPromise = useRef(managedPromise<SensorAPI>())
-  useEffect(() => {
-    if (animate)
-      apiPromise.current.resolve(animate)
-  }, [animate])
-
+  const { reorderer, api, ...hook } = useReorder(animatedItems, config)
 
   if (items.length === 0)
-    return { reorderer, animate, ...hook, run() {} }
+    return { reorderer, api, ...hook, run() {} }
 
   const running = useRef({ promise: Promise.resolve(), resolve: () => {} })
   const [present, remove] = usePresence()
@@ -86,9 +80,9 @@ export function useAnimatedReorder(items: Item[], config?: AnimatedConfig): Anim
   }, [present])
 
   async function run() {
-    const api = await apiPromise.current.promise
+    const api_ = await api.current.promise
     running.current = managedPromise()
-    await runAnimation({ api, iconControls, itemId: items[0].id, setModal })
+    await runAnimation({ api: api_, iconControls, itemId: items[0].id, setModal })
     running.current.resolve()
   }
 
@@ -99,5 +93,5 @@ export function useAnimatedReorder(items: Item[], config?: AnimatedConfig): Anim
     </>
   )
 
-  return { ...hook, animate, run, reorderer: animatedReorderer }
+  return { ...hook, api, run, reorderer: animatedReorderer }
 }

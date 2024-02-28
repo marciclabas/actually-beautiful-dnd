@@ -4957,14 +4957,14 @@ __metadata:
   languageName: node
   linkType: hard
 
-"use-beautiful-dnd@npm:^1.0.7":
-  version: 1.0.7
-  resolution: "use-beautiful-dnd@npm:1.0.7"
+"use-beautiful-dnd@npm:^1.0.8":
+  version: 1.0.8
+  resolution: "use-beautiful-dnd@npm:1.0.8"
   dependencies:
     "@types/react-beautiful-dnd": "npm:^13.1.8"
     react: "npm:^18.2.0"
     react-beautiful-dnd: "npm:^13.1.1"
-  checksum: 10c0/278623f2f976f10f5ff8a323cddc762e87dc3673c26fb663ba76c98549cc4daf92e808de9a2a71b5a5127f302624a4b9a32c0e08472c5ac7c4aae0545dcbc5f0
+  checksum: 10c0/8c1594afa3882a3f7551dade4869ce656e5597183e3620df1c0adb6842a4de633e4b5b59e1160eaf2b127958f65c3fe2ea13f33b0e09ea400a7f72b7f0ef002b
   languageName: node
   linkType: hard
 
@@ -5089,7 +5089,7 @@ __metadata:
     react-icons: "npm:^5.0.1"
     react-router-dom: "npm:^6.22.1"
     typescript: "npm:^5.2.2"
-    use-beautiful-dnd: "npm:^1.0.7"
+    use-beautiful-dnd: "npm:^1.0.8"
     use-reorder: "npm:^1.0.20"
     vite: "npm:^5.1.4"
   languageName: unknown

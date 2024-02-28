@@ -1,4 +1,4 @@
-import React, { ReactNode,  useMemo, useState } from "react";
+import React, { MutableRefObject, ReactNode,  useMemo, useState } from "react";
 import { Direction, DragDropContext, DropResult, SensorAPI, useKeyboardSensor, useMouseSensor } from "react-beautiful-dnd";
 import { useAnimationSensor, Draggable, Droppable, useDraggableContext, useTouchSensor, TouchConfig, DraggableContext } from "use-beautiful-dnd";
 import { range, equals } from './util/arrays'
@@ -22,6 +22,7 @@ export type Config = TouchConfig & {
 * - `order`: current order, 0-indexed respect to parameter `items`
 * - `ordered`: `items` in the current order
 * - `dirty`: whether `items != ordered` (ie., whether the order has changed)
+* - `api`: `SensorAPI` to programmatically animate items
 */
 export type Hook = {
   reorderer: JSX.Element
@@ -29,7 +30,7 @@ export type Hook = {
   setOrder(order: number[]): void
   ordered: Item[]
   dirty: boolean
-  animate: SensorAPI | null
+  api: MutableRefObject<{ promise: Promise<SensorAPI> }>
 }
 
 function withContext(idx: number, Elem: Item['elem']) {
@@ -52,7 +53,7 @@ export function useReorder(items: Item[], config?: Config): Hook {
   };
 
   const ordered = order.map((i) => items[i]);
-  const { sensor, api } = useAnimationSensor()
+  const { sensor, apiRef } = useAnimationSensor()
 
   const touch = useTouchSensor(config)
 
@@ -68,5 +69,5 @@ export function useReorder(items: Item[], config?: Config): Hook {
     </DragDropContext>
   );
 
-  return { reorderer, order, ordered, dirty, setOrder, animate: api };
+  return { reorderer, order, ordered, dirty, setOrder, api: apiRef };
 }
