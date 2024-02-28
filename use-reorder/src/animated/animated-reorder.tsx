@@ -51,7 +51,7 @@ export function useAnimatedReorder(items: Item[], config?: AnimatedConfig): Anim
   function makeAnimated({ id, elem }: Item): Item {
     return {
       id, elem: props => (
-        <div>
+        <div style={{position: 'relative'}}>
           {elem(props)}
           <Modal show={modal} style={modalStyle}>
             <motion.div animate={iconControls} initial={{ scale: 1 }} style={{ y: '70%', x: '40%' }}>
