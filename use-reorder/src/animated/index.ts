@@ -1,1 +1,2 @@
-export { useAnimatedReorder, type AnimatedConfig, type AnimatedHook, type AnimationConfig } from './reorder'
+export { useAnimatedReorder, type AnimatedConfig, type AnimatedHook, type AnimationConfig } from './animated-reorder'
+export { useMultiAnimation, type Hook as MultiAnimatedHook, type Config as MultiAnimatedConfig } from './multi-animation'
