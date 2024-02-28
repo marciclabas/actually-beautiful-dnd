@@ -1,6 +1,6 @@
 {
     "name": "use-beautiful-dnd",
-    "version": "1.0.9",
+    "version": "1.0.10",
     "description": "Like `react-beautiful-dnd`, without the ugly code (ehem render props).",
     "main": "dist/index.js",
     "scripts": {
