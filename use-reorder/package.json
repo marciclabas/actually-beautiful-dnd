@@ -1,6 +1,6 @@
 {
     "name": "use-reorder",
-    "version": "1.0.23",
+    "version": "1.0.24",
     "description": "Hooks API wrapper around `react-beautiful-dnd`",
     "main": "dist/index.js",
     "scripts": {
