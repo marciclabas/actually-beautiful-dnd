@@ -34,7 +34,7 @@ export type Hook<Order = IdOrder> = {
   order: Order
 }
 
-function withContext(list: number, idx: number, Elem: Item['elem']) {
+const withContext = (list: number, idx: number) => (Elem: Item['elem']) => {
   const ctx = useDraggableContext()
   return <Elem idx={idx} list={list} {...ctx} />
 }
@@ -50,43 +50,6 @@ type DivProps = HTMLProps<HTMLDivElement>
 function droppableProps(listProps?: DivProps, configProps?: DivProps): DivProps {
   const {style, ...props} = {...listProps, ...configProps}
   return {...props, style: { width: '100%', height: '100%', ...style}}
-}
-
-/** ID-based multi-reorderer */
-function useIdMultiReorder(items: Item[], listIds: List[], config?: Config): Hook {
-
-  const startOrder = config?.startOrder ?? emptyOrder(items.length, listIds.map(l => l.id))
-  const [order, setOrder] = useState(startOrder)
-
-  function onDragEnd(r: DropResult) {
-    setOrder(order => multiReorder(order, r))
-  }
-
-  const lists = listIds.map(list => (
-    <Droppable droppableId={list.id}
-      divProps={droppableProps(list.droppableProps, config?.droppableProps)}
-    >
-      {order.get(list.id)!.map((i, idx) => (
-        <Draggable key={items[i].id} draggableId={items[i].id} index={idx}
-          divProps={{...items[i].draggableProps, ...config?.draggableProps}}
-        >
-          {withContext(i, idx, items[i].elem)}
-        </Draggable>
-      ))}
-    </Droppable>
-  ))
-
-  return { lists, order, onDragEnd }
-}
-
-/** Index-based multi-reorder */
-function useIdxMultiReorder(items: Item[], numLists: number, config?: Config<IdxOrder>): Hook<IdxOrder> {
-  const listIds = range(numLists).map(i => ({ id: `${i}` }))
-  const newOrder = config?.startOrder && new Map(config.startOrder.map((idxs, list) => [`${list}`, idxs]))
-  console.log('start order:', newOrder)
-  const { order: idOrder, ...hook } = useIdMultiReorder(items, listIds, {...config, startOrder: newOrder})
-  const order = listIds.map(list => idOrder.get(list.id)!)
-  return { order, ...hook }
 }
 
 /** #### DOESN'T WORK WITH <React.StrictMode>
@@ -113,7 +76,32 @@ function useIdxMultiReorder(items: Item[], numLists: number, config?: Config<Idx
  * )
  * ```
  */
-export function useMultiReorder(items: Item[], lists: List[], config?: Config): Hook;
+export function useMultiReorder(items: Item[], listIds: List[], config?: Config): Hook {
+
+  const startOrder = config?.startOrder ?? emptyOrder(items.length, listIds.map(l => l.id))
+  const [order, setOrder] = useState(startOrder)
+
+  function onDragEnd(r: DropResult) {
+    setOrder(order => multiReorder(order, r))
+  }
+
+  const lists = listIds.map((list, listIdx) => (
+    <Droppable droppableId={list.id}
+      divProps={droppableProps(list.droppableProps, config?.droppableProps)}
+    >
+      {order.get(list.id)!.map((i, idx) => (
+        <Draggable key={items[i].id} draggableId={items[i].id} index={idx}
+          divProps={{...items[i].draggableProps, ...config?.draggableProps}}
+        >
+          {withContext(listIdx, idx)(items[i].elem)}
+        </Draggable>
+      ))}
+    </Droppable>
+  ))
+
+  return { lists, order, onDragEnd }
+}
+
 /** #### DOESN'T WORK WITH <React.StrictMode>
  * 
  * ```jsx
@@ -138,9 +126,11 @@ export function useMultiReorder(items: Item[], lists: List[], config?: Config): 
  * )
  * ```
 */
-export function useMultiReorder(items: Item[], numLists: number, config?: Config<IdxOrder>): Hook<IdxOrder>;
-export function useMultiReorder(items: Item[], lists: number | List[], config?: any): Hook | Hook<IdxOrder> {
-  return typeof lists === 'number'
-    ? useIdxMultiReorder(items, lists, config)
-    : useIdMultiReorder(items, lists, config)
+export function useMultiReorderIdx(items: Item[], numLists: number, config?: Config<IdxOrder>): Hook<IdxOrder> {
+  const listIds = range(numLists).map(i => ({ id: `${i}` }))
+  const newOrder = config?.startOrder && new Map(config.startOrder.map((idxs, list) => [`${list}`, idxs]))
+  console.log('start order:', newOrder)
+  const { order: idOrder, ...hook } = useMultiReorder(items, listIds, {...config, startOrder: newOrder})
+  const order = listIds.map(list => idOrder.get(list.id)!)
+  return { order, ...hook }
 }

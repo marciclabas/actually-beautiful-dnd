@@ -33,7 +33,7 @@ export type Hook = {
   api: MutableRefObject<{ promise: Promise<SensorAPI> }>
 }
 
-function withContext(idx: number, Elem: Item['elem']) {
+const withContext = (idx: number) => (Elem: Item['elem']) => {
   const ctx = useDraggableContext()
   return <Elem idx={idx} {...ctx} />
 }
@@ -62,7 +62,7 @@ export function useReorder(items: Item[], config?: Config): Hook {
       <Droppable droppableId='whatever'>
         {ordered.map((item, i) => (
           <Draggable key={item.id} draggableId={item.id} index={i} isDragDisabled={config?.disabled}>
-            {withContext(i, item.elem)}
+            {withContext(i)(item.elem)}
           </Draggable>
         ))}
       </Droppable>

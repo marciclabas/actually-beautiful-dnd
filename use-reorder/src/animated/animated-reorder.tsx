@@ -3,7 +3,6 @@ import { Modal, useNotifiedState } from "framer-animations";
 import { useAnimation, motion, MotionStyle, usePresence } from "framer-motion";
 import { run as runAnimation } from "./animations/reorder";
 import DragIcon from "./DragIcon";
-import { SensorAPI } from "react-beautiful-dnd";
 import { useReorder, Config, Hook, Item } from "../reorder";
 import { managedPromise } from "../util/promises";
 
@@ -69,15 +68,15 @@ export function useAnimatedReorder(items: Item[], config?: AnimatedConfig): Anim
 
   const { reorderer, api, ...hook } = useReorder(animatedItems, config)
 
-  if (items.length === 0)
-    return { reorderer, api, ...hook, run() {} }
-
   const running = useRef({ promise: Promise.resolve(), resolve: () => {} })
   const [present, remove] = usePresence()
   useEffect(() => {
     if (!present)
       running.current.promise.then(() => remove?.())
-  }, [present])
+  }, [present, remove])
+
+  if (items.length === 0)
+    return { reorderer, api, ...hook, run() {} }
 
   async function run() {
     const api_ = await api.current.promise

@@ -1,5 +1,5 @@
 import { useTouchAnimation, TouchConfig } from "framer-animations"
-import { useEffect, useRef } from "react"
+import { useCallback, useEffect, useRef } from "react"
 import { SensorAPI } from "react-beautiful-dnd"
 import { useAnimationSensor } from "use-beautiful-dnd"
 import { managedPromise } from "../util/promises"
@@ -62,14 +62,14 @@ export function useMultiAnimation(itemId: string, config?: Config): Hook {
   useEffect(() => {
     if (!present)
       running.current.promise.then(() => remove?.())
-  }, [present])
+  }, [present, remove])
 
-  async function run() {
+  const run = useCallback(async () => {
     const api = await apiRef.current.promise
     running.current = managedPromise()
     await animate({ api, itemId, animateIcon })
     running.current.resolve()
-  }
+  }, [animateIcon, apiRef, itemId])
 
   return { animation, run, sensor }
 }
