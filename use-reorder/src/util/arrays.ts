@@ -1,6 +1,5 @@
-export function* range(n: number) {
-  for (let i = 0; i < n; i++)
-    yield i
+export function range(n: number) {
+  return new Array(n).fill(0).map((_, i) => i)
 }
 
 /** Single-level equality (`x === y` for each element) */

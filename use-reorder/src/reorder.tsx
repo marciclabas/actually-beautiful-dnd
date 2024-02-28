@@ -40,7 +40,7 @@ function withContext(idx: number, Elem: Item['elem']) {
 /** #### DOESN'T WORK WITH <React.StrictMode> */
 export function useReorder(items: Item[], config?: Config): Hook {
 
-  const startOrder = useMemo(() => [...range(items.length)], [items.length])
+  const startOrder = useMemo(() => range(items.length), [items.length])
   const [order, setOrder] = useState(startOrder);
   const dirty = equals(order, startOrder)
 

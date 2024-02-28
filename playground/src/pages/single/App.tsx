@@ -5,7 +5,7 @@ import { useAnimatedReorder } from 'use-reorder/dist/animated'
 
 export function App() {
 
-  const items: Item[] = [...range(3)].map(i => ({
+  const items: Item[] = range(3).map(i => ({
     id: `${i}`, elem: ({ idx }: ItemProps) => (
       <VStack align='center' h='25vh' w='25vh' pos='relative' bg={`gray.${i*100+300}`}>
         {/* <Image maxH='100%' src={`/images/sheet${i % 2}.jpg`} /> */}
