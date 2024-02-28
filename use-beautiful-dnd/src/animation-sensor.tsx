@@ -1,4 +1,4 @@
-import { MutableRefObject, useRef, useState } from "react"
+import { MutableRefObject, useCallback, useRef } from "react"
 import { SensorAPI } from "react-beautiful-dnd"
 import { managedPromise } from "./util/promises"
 
@@ -24,8 +24,8 @@ export type Hook = {
  */
 export function useAnimationSensor(): Hook {
   const apiRef = useRef(managedPromise<SensorAPI>())
-  function sensor(api: SensorAPI) {
+  const sensor = useCallback((api: SensorAPI) => {
     apiRef.current.resolve(api)
-  }
+  }, [])
   return { sensor, apiRef }
 }

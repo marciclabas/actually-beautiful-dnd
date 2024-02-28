@@ -1,6 +1,6 @@
 import { useRef, useCallback, useMemo } from 'react';
 import type { Position } from 'css-box-model';
-import { DraggableId, SensorAPI, PreDragActions, FluidDragActions } from 'react-beautiful-dnd';
+import { SensorAPI, PreDragActions, FluidDragActions } from 'react-beautiful-dnd';
 import * as keyCodes from './keycodes';
 // import supportedPageVisibilityEventName from './util/supported-page-visibility-event-name';
 // import useLayoutEffect from '../../use-isomorphic-layout-effect';
@@ -256,7 +256,7 @@ export const useTouchSensor = (config?: Config) => (api: SensorAPI) => {
       unbindTarget();
       unbindWindow();
     };
-  }, [cancel, getPhase, stop]);
+  }, [cancel, getPhase, stop, forcePressThreshold]);
 
   const startDragging = useCallback(() => {
     const phase = getPhase() as Pending;
@@ -272,7 +272,7 @@ export const useTouchSensor = (config?: Config) => (api: SensorAPI) => {
     const longPressTimerId: number = window.setTimeout(startDragging, timeForLongPress); // Adjust timeForLongPress as needed
     setPhase({ type: 'PENDING', point, actions, longPressTimerId });
     bindCapturingEvents();
-  }, [bindCapturingEvents, getPhase, setPhase, startDragging]);
+  }, [bindCapturingEvents, getPhase, setPhase, startDragging, timeForLongPress]);
 
   useIsomorphicLayoutEffect(() => {
     listenForCapture();
