@@ -1,6 +1,6 @@
 {
     "name": "use-reorder",
-    "version": "1.0.21",
+    "version": "1.0.22",
     "description": "Hooks API wrapper around `react-beautiful-dnd`",
     "main": "dist/index.js",
     "scripts": {
@@ -28,7 +28,7 @@
         "react": "^18.2.0",
         "react-beautiful-dnd": "^13.1.1",
         "react-dom": "^18.2.0",
-        "use-beautiful-dnd": "^1.0.4"
+        "use-beautiful-dnd": "^1.0.8"
     },
     "peerDependencies": {
         "framer-animations": "^1.2.14"
