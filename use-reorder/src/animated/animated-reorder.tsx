@@ -1,10 +1,11 @@
-import React, { useEffect, useRef } from "react";
+import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Modal, useNotifiedState } from "framer-animations";
 import { useAnimation, motion, MotionStyle, usePresence } from "framer-motion";
 import { run as runAnimation } from "./animations/reorder";
 import DragIcon from "./DragIcon";
 import { useReorder, Config, Hook, Item } from "../reorder";
 import { managedPromise } from "../util/promises";
+import { update } from "ramda";
 
 export type AnimationConfig = {
   handIcon?: JSX.Element
@@ -47,7 +48,7 @@ export function useAnimatedReorder(items: Item[], config?: AnimatedConfig): Anim
   const [modal, setModal] = useNotifiedState(false)
   const iconControls = useAnimation()
 
-  function makeAnimated({ id, elem }: Item): Item {
+  const makeAnimated = useCallback(({ id, elem }: Item): Item => {
     return {
       id, elem: props => (
         <div style={{position: 'relative'}}>
@@ -60,30 +61,39 @@ export function useAnimatedReorder(items: Item[], config?: AnimatedConfig): Anim
         </div>
       )
     }
-  }
+  }, [handIcon, iconControls, modal, modalStyle])
 
-  const animatedItems: Item[] = items.length > 0
-  ? [makeAnimated(items[0]), ...items.slice(1)]
-  : items
+  const [animatedIdx, setAnimated] = useState(0)
 
-  const { reorderer, api, ...hook } = useReorder(animatedItems, config)
+  const animatedItems: Item[] = useMemo(() => {
+    if (items.length === 0)
+      return items
+    return update(animatedIdx, makeAnimated(items[animatedIdx]), items)
+  }, [items, makeAnimated, animatedIdx])
+
+  const { reorderer, api, order, ...hook } = useReorder(animatedItems, config)
+
+  useEffect(() => {
+    setAnimated(order[0])
+  }, [order])
 
   const running = useRef({ promise: Promise.resolve(), resolve: () => {} })
   const [present, remove] = usePresence()
+
   useEffect(() => {
     if (!present)
       running.current.promise.then(() => remove?.())
   }, [present, remove])
 
-  if (items.length === 0)
-    return { reorderer, api, ...hook, run() {} }
-
-  async function run() {
+  const run = useCallback(async () => {
     const api_ = await api.current.promise
     running.current = managedPromise()
-    await runAnimation({ api: api_, iconControls, itemId: items[0].id, setModal })
+    await runAnimation({ api: api_, iconControls, itemId: items[animatedIdx].id, setModal })
     running.current.resolve()
-  }
+  }, [api, iconControls, items, setModal, animatedIdx])
+  
+  if (items.length === 0)
+    return { reorderer, api, order, ...hook, run() {} }
 
   const animatedReorderer = (
     <>
@@ -92,5 +102,5 @@ export function useAnimatedReorder(items: Item[], config?: AnimatedConfig): Anim
     </>
   )
 
-  return { ...hook, api, run, reorderer: animatedReorderer }
+  return { order, api, run, reorderer: animatedReorderer, ...hook }
 }
