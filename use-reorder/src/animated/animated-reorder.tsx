@@ -1,6 +1,6 @@
-import React, { useEffect, useRef, useState } from "react";
-import { Modal } from "framer-animations";
-import { useAnimation, motion, MotionStyle } from "framer-motion";
+import React, { useEffect, useRef } from "react";
+import { Modal, useNotifiedState } from "framer-animations";
+import { useAnimation, motion, MotionStyle, usePresence } from "framer-motion";
 import { run as runAnimation } from "./animations/reorder";
 import DragIcon from "./DragIcon";
 import { SensorAPI } from "react-beautiful-dnd";
@@ -19,10 +19,33 @@ export type AnimatedConfig = Config & { animation?: AnimationConfig }
 export type AnimatedHook = Hook & {
   run(): void
 }
+
+/**
+ * - **Condider wrapping the component using this hook with `<AnimatePresence>`**
+ * - Otherwise, if an animation is running and the component unmounts, `react-beautiful-dnd` will be kind enough to throw an ugly error
+ * - Example:
+ *    ```jsx
+ *    import { AnimatePresence } from 'framer-motion' // already required by `framer-animations`
+ *    import { useAnimatedReorder } from 'use-reorder/dist/animated'
+ * 
+ *    function ReorderComponent() {
+ *      const { ... } = useAnimatedReorder()
+ *    }
+ * 
+ *    function Parent() {
+ *      return (
+ *        <AnimatePresence initial={false}>  
+ *          <ReorderComponent />
+ *        </AnimatePresence>
+ *      )
+ *    }
+ *    
+ *    ```
+ */
 export function useAnimatedReorder(items: Item[], config?: AnimatedConfig): AnimatedHook {
 
   const { handIcon, modalStyle } = {...defaultCfg, ...config?.animation}
-  const [modal, setModal] = useState(false)
+  const [modal, setModal] = useNotifiedState(false)
   const iconControls = useAnimation()
 
   function makeAnimated({ id, elem }: Item): Item {
@@ -55,9 +78,18 @@ export function useAnimatedReorder(items: Item[], config?: AnimatedConfig): Anim
   if (items.length === 0)
     return { reorderer, animate, ...hook, run() {} }
 
+  const running = useRef({ promise: Promise.resolve(), resolve: () => {} })
+  const [present, remove] = usePresence()
+  useEffect(() => {
+    if (!present)
+      running.current.promise.then(() => remove?.())
+  }, [present])
+
   async function run() {
     const api = await apiPromise.current.promise
-    runAnimation({ api, iconControls, itemId: items[0].id, setModal })
+    running.current = managedPromise()
+    await runAnimation({ api, iconControls, itemId: items[0].id, setModal })
+    running.current.resolve()
   }
 
   const animatedReorderer = (

@@ -3227,14 +3227,14 @@ __metadata:
   languageName: node
   linkType: hard
 
-"framer-animations@npm:^1.3.0":
-  version: 1.3.0
-  resolution: "framer-animations@npm:1.3.0"
+"framer-animations@npm:^1.3.6":
+  version: 1.3.6
+  resolution: "framer-animations@npm:1.3.6"
   dependencies:
     framer-motion: "npm:^11.0.5"
     react: "npm:^18.2.0"
     react-dom: "npm:^18.2.0"
-  checksum: 10c0/f4eca6566f72b39e82ad7a3489629ed30349f24992e2610b112d664323227da027f79e395983990164b9ebc99840aad0bb7755d548b9804087ff08611060ec33
+  checksum: 10c0/4b8cd42df6d4574a1ffa0f2154c381b3f317ca77c740b9aefbfaefd6148f1c526a4add0a9984fed7f8d66bb6008c32a046141afefbf42d95af6eadded6d564dd
   languageName: node
   linkType: hard
 
@@ -4992,9 +4992,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"use-reorder@npm:^1.0.18":
-  version: 1.0.18
-  resolution: "use-reorder@npm:1.0.18"
+"use-reorder@npm:^1.0.20":
+  version: 1.0.20
+  resolution: "use-reorder@npm:1.0.20"
   dependencies:
     ramda: "npm:^0.29.1"
     react: "npm:^18.2.0"
@@ -5003,7 +5003,7 @@ __metadata:
     use-beautiful-dnd: "npm:^1.0.4"
   peerDependencies:
     framer-animations: ^1.2.14
-  checksum: 10c0/2a23c93b858fe1a786e6606151b06e5d7ae5db5a80790a6d0cfec6775501f2a13fb4dc5bd56b9533b0a32b31bb72bb0e9a6517b9caefef92abfd33ed125626b4
+  checksum: 10c0/c0e5a688ee768dfbc13a3c8241ea983e009140fb9b4764b0abf7ea61c93584fcd970628df72c3b16b419e072c0024b4f2d2b018aa72b605c4d1e0a31e181ef9e
   languageName: node
   linkType: hard
 
@@ -5080,7 +5080,7 @@ __metadata:
     eslint: "npm:^8.56.0"
     eslint-plugin-react-hooks: "npm:^4.6.0"
     eslint-plugin-react-refresh: "npm:^0.4.5"
-    framer-animations: "npm:^1.3.0"
+    framer-animations: "npm:^1.3.6"
     framer-motion: "npm:^11.0.6"
     ramda: "npm:^0.29.1"
     react: "npm:^18.2.0"
@@ -5090,7 +5090,7 @@ __metadata:
     react-router-dom: "npm:^6.22.1"
     typescript: "npm:^5.2.2"
     use-beautiful-dnd: "npm:^1.0.7"
-    use-reorder: "npm:^1.0.18"
+    use-reorder: "npm:^1.0.20"
     vite: "npm:^5.1.4"
   languageName: unknown
   linkType: soft

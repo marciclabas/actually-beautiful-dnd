@@ -5,7 +5,7 @@ import { SensorAPI } from "react-beautiful-dnd"
 export type Params = {
   api: SensorAPI
   itemId: string
-  animateIcon(action: Action): void
+  animateIcon(action: Action): Promise<void>
 }
 
 export async function animate({ api, itemId, animateIcon }: Params) {
@@ -13,9 +13,8 @@ export async function animate({ api, itemId, animateIcon }: Params) {
   if (!lock)
     return false
 
-  animateIcon('show')
+  await animateIcon('show')
   const lift = lock.snapLift()
-  await delay(0.2)
   animateIcon('press')
   await delay(0.3)
   lift.moveRight();

@@ -3,11 +3,13 @@ import { RouteObject, useNavigate, useRoutes } from "react-router-dom"
 import { Button } from "@chakra-ui/react"
 import Multi from "./pages/multi/Multi"
 import TouchAnim from "./pages/touch/TouchAnim"
+import DndError from "./pages/dnd-error/DndError"
 
 const pages: Record<string, JSX.Element> = {
   single: <Single />,
   multi: <Multi />,
-  touch: <TouchAnim />
+  touch: <TouchAnim />,
+  error: <DndError />,
 }
 
 function Menu() {

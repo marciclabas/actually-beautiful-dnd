@@ -4,6 +4,7 @@ import { SensorAPI } from "react-beautiful-dnd"
 import { useAnimationSensor } from "use-beautiful-dnd"
 import { managedPromise } from "../util/promises"
 import { animate } from "./animations/multi-reorder"
+import { usePresence } from "framer-motion"
 
 export type Hook = {
   run(): void
@@ -15,25 +16,41 @@ export type Config = {
 }
 
 /** Dragging hint animation for `useMultiReorder` (or any `react-beautiful-based` multilist)
- * - **Requires installing `framer-animations`**
+ * - Requires installing `framer-animations`
+ * - **Condider wrapping the component using this hook with `<AnimatePresence>`**
+ * - Otherwise, if an animation is running and the component unmounts, `react-beautiful-dnd` will be kind enough to throw an ugly error
+ * - Example:
+ *    ```jsx
+ *    import { AnimatePresence } from 'framer-motion' // already required by `framer-animations`
+ *    import { useMultiReorder, MultiItem } from 'use-reorder'
+ *    import { useMultiAnimation } from 'use-reorder/dist/animated'
+ *    
  * 
- * ```jsx
- * import { useMultiReorder, MultiItem } from 'use-reorder'
- * import { useMultiAnimation } from 'use-reorder/dist/animated'
+ *    function ReorderComponent() {
+ *      const { animation, run, sensor } = useMultiAnimation('animated-item')
+ *    
+ *      const items = [
+ *       { id: 'some-item', elem: () => <div>...</div> },
+ *       { id: 'animated-item', elem: () => <div style={{position: 'relative'}}>...{animation}</div> } // inject the animation to the animated item
+ *      ]
+ *    
+ *      const { onDragEnd, .., } = useMultiReorder(items, ...)
+ *    
+ *      return (
+ *        <DragDropContext onDragEnd={onDragEnd} sensors={[sensor]}>
+ *          ...
+ *        </DragDropContext>
+ *       )
+ *     }
  * 
- * const { animation, run, sensor } = useMultiAnimation('animated-item')
- * 
- * const items = [
- *  { id: 'some-item', elem: () => <div>...</div> },
- *  { id: 'animated-item', elem: () => <div style={{position: 'relative'}}>...{animation}</div> } // inject the animation to the animated item
- * ]
- * 
- * const { onDragEnd, .., } = useMultiReorder(items, ...)
- * 
- * return (
- *  <DragDropContext onDragEnd={onDragEnd} sensors={[sensor]}>
- *  ...
- * ```
+ *    function Parent() {
+ *      return (
+ *        <AnimatePresence initial={false}>  
+ *          <ReorderComponent />
+ *        </AnimatePresence>
+ *      )
+ *    }
+ *    ```
  * 
 */
 export function useMultiAnimation(itemId: string, config?: Config): Hook {
@@ -46,9 +63,18 @@ export function useMultiAnimation(itemId: string, config?: Config): Hook {
       apiPromise.current.resolve(api)
   }, [api])
 
+  const running = useRef({ promise: Promise.resolve(), resolve: () => {} })
+  const [present, remove] = usePresence()
+  useEffect(() => {
+    if (!present)
+      running.current.promise.then(() => remove?.())
+  }, [present])
+
   async function run() {
     const api = await apiPromise.current.promise
-    animate({ api, itemId, animateIcon })
+    running.current = managedPromise()
+    await animate({ api, itemId, animateIcon })
+    running.current.resolve()
   }
 
   return { animation, run, sensor }

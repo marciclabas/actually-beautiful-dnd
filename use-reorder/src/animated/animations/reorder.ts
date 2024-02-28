@@ -5,7 +5,7 @@ import { SensorAPI } from "react-beautiful-dnd"
 export type Params = {
   api: SensorAPI
   itemId: string
-  setModal(show: boolean): void
+  setModal(show: boolean): Promise<void>
   iconControls: AnimationControls
 }
 
@@ -14,10 +14,8 @@ export async function run({ api, itemId, iconControls, setModal }: Params) {
   if (!lock)
     return false
 
-  iconControls.start({ scale: 1, opacity: 1, zIndex: 1 })
-  setModal(true)
+  await setModal(true)
   const lift = lock.snapLift()
-  await delay(0.2)
   await iconControls.start({ scale: 0.7 })
   await delay(0.1)
   lift.moveDown();
