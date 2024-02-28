@@ -30,7 +30,7 @@ export function Droppable({children, divProps, ...props}: Props) {
   return (
     <DnDDroppable {...props}>
       {({ droppableProps, innerRef, placeholder }, snapshot) => (
-        <div {...droppableProps} ref={innerRef} {...divProps}>
+        <div {...divProps} {...droppableProps} ref={innerRef}>
           <DroppableCtx.Provider value={snapshot}>
             {children}
           </DroppableCtx.Provider>

@@ -34,10 +34,13 @@ export type Props = DragProps & {
  * ```
  */
 export function Draggable({children, divProps, ...props}: Props) {
+  const { style, ...others } = divProps ?? {}
   return (
     <DnDDraggable {...props}>
-      {({ dragHandleProps, draggableProps, innerRef }, snapshot, rubric) => (
-        <div ref={innerRef} {...dragHandleProps} {...draggableProps} {...divProps}>
+      {({ dragHandleProps, draggableProps: {style: dragStyle, ...dragOthers}, innerRef }, snapshot, rubric) => (
+        <div {...others} ref={innerRef} {...dragHandleProps} {...dragOthers}
+          style={{...style, ...dragStyle}}
+        >
           <DraggableCtx.Provider value={{snapshot, rubric}}>
             {children}
           </DraggableCtx.Provider>
